@@ -1,6 +1,8 @@
 {
     "name": "easycode/phalcon-rest",
     "description": "Phalcon REST Library",
+    "type": "library",
+    "license": "MIT",
     "require": {
         "php": ">=7.2",
         "ext-phalcon": ">=2.0.0",
