@@ -1,5 +1,7 @@
 # Phalcon REST
 
+[![Latest Stable Version](https://poser.pugx.org/easycode/phalcon-rest/v/stable)](https://packagist.org/packages/easycode/phalcon-rest)
+
 *a library focused on simplifying the creation of RESTful API's*
 
 ## Installing
