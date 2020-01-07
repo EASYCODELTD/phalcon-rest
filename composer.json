@@ -8,10 +8,6 @@
         "ext-phalcon": ">=2.0.0",
         "redound/phalcon-api": "^1.0.2"
     },
-    "suggest": {
-        "league/fractal": "^0.13.0",
-        "firebase/php-jwt": "^3.0"
-    },
     "authors": [
         {
             "name": "Olivier Andriessen",
