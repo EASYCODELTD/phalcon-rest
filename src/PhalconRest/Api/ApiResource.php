@@ -37,6 +37,43 @@ class ApiResource extends ApiCollection implements MountableInterface, Collectio
             ->endpoint(ApiEndpoint::remove());
     }
 
+    
+    public function setUpRoles()
+    {
+        
+        
+        $helper = $this->getDI()->get(ServicesConst::HELPER_SERVICE);
+        $endpoints = $helper->getEndpoint($this->name);
+         
+        foreach($endpoints as $endpoint)
+        {
+            error_log("Type: ".$endpoint->method);
+                        
+            switch($endpoint->method)
+            {
+                
+                case 'handler':  $this->deny(explode(',',$endpoint->deny))->handler(CrudResourceController::class); break;
+            
+                case 'all':
+                    $this->endpoint(ApiEndpoint::all()->deny(explode(',',$endpoint->deny))->allow(explode(',',$endpoint->allow))->description($endpoint->description));
+                break;
+                case 'create':
+                    $this->endpoint(ApiEndpoint::create()->deny(explode(',',$endpoint->deny))->allow(explode(',',$endpoint->allow))->description($endpoint->description));
+                break;
+                case 'find':
+                    $this->endpoint(ApiEndpoint::find()->deny(explode(',',$endpoint->deny))->allow(explode(',',$endpoint->allow))->description($endpoint->description));
+                break;
+                case 'update':
+                    $this->endpoint(ApiEndpoint::update()->deny(explode(',',$endpoint->deny))->allow(explode(',',$endpoint->allow))->description($endpoint->description));
+                break;
+                case 'remove':
+                    $this->endpoint(ApiEndpoint::remove()->deny(explode(',',$endpoint->deny))->allow(explode(',',$endpoint->allow))->description($endpoint->description));
+                break;          
+            }
+            
+        }
+    }
+
     /**
      * Returns resource with default values
      *
@@ -76,6 +113,7 @@ class ApiResource extends ApiCollection implements MountableInterface, Collectio
             $resource->name($name);
         }
 
+            
         return $resource;
     }
 
@@ -117,9 +155,9 @@ class ApiResource extends ApiCollection implements MountableInterface, Collectio
             $this->_modelPrimaryKey = $modelsMetaData->getIdentityField(new $modelClass);
         }
 
-        return $this->_modelPrimaryKey;
+        return ($this->_modelPrimaryKey?$this->_modelPrimaryKey:'uuid');
     }
-
+ 
     /**
      * @param string $transformer Classname of the transformer
      *

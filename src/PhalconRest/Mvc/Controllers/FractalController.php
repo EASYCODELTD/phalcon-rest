@@ -49,15 +49,38 @@ class FractalController extends Controller
     protected function createItemOkResponse($item, $transformer, $resourceKey = null, $meta = null)
     {
         $response = ['result' => 'OK'];
-        $response += $this->createItemResponse($item, $transformer, $resourceKey, $meta);
-
+        
+        
+        if(!$item) {
+            error_log("NO ITEM !!!! ".__FILE__.":".__LINE__);        
+        } else if(!$transformer) {
+            error_log("NO TRANSFORMER !!!! ".__FILE__.":".__LINE__);
+        }  else {  
+            $response += $this->createItemResponse($item, $transformer, $resourceKey, $meta);
+        }
+        
+            
         return $this->createResponse($response);
     }
 
     protected function createItemResponse($item, $transformer, $resourceKey = null, $meta = null)
     {
         $resource = new Item($item, $transformer, $resourceKey);
-        $data = $this->fractal->createData($resource)->toArray();
+        
+        
+        
+        $data = $this->fractal->createData($resource);
+        
+        try {
+                
+            $data = $data->toArray();
+            
+        } catch (\Exception $e) {
+            error_log("Something not right with resource: ".$e->getMessage());
+            $data = [];
+        }
+        
+        if(!is_array($data)) $data = [];
         $response = array_merge($data, $meta ? $meta : []);
 
         return $this->createResponse($response);

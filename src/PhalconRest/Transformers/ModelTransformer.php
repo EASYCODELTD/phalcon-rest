@@ -15,6 +15,13 @@ class ModelTransformer extends Transformer
     const TYPE_STRING = 5;
     const TYPE_DATE = 6;
     const TYPE_JSON = 7;
+    const TYPE_VCARD = 8;
+    const TYPE_UUID = 9;
+    const TYPE_DATE_TIME = 10;
+    const TYPE_BINARY = 11;
+    const TYPE_HTML = 12;
+    
+    
 
     protected $modelClass;
 
@@ -31,7 +38,7 @@ class ModelTransformer extends Transformer
         $result = [];
         $keyMap = $this->keyMap();
 
-        foreach ($this->getResponseProperties() as $property) {
+        foreach ($this->getResponseProperties($item) as $property) {
 
             $fieldName = array_key_exists($property, $keyMap) ? $keyMap[$property] : $property;
             $result[$fieldName] = $this->getFieldValue($item, $property, $fieldName);
@@ -53,15 +60,15 @@ class ModelTransformer extends Transformer
         return [];
     }
 
-    public function getResponseProperties()
+    public function getResponseProperties($item=NULL)
     {
-        return array_diff($this->includedProperties(), $this->excludedProperties());
+        return array_diff($this->includedProperties($item), $this->excludedProperties($item));
     }
 
     /**
      * @return array Properties to be included in the response
      */
-    protected function includedProperties()
+    protected function includedProperties($item=NULL)
     {
         $attributes = $this->getModelAttributes();
         $columnMap = $this->getModelColumnMap();
@@ -115,7 +122,7 @@ class ModelTransformer extends Transformer
     /**
      * @return array Properties to be excluded in the response
      */
-    protected function excludedProperties()
+    protected function excludedProperties($item=NULL)
     {
         return [];
     }
@@ -166,15 +173,42 @@ class ModelTransformer extends Transformer
                 break;
             }
 
+            
+            
             case self::TYPE_DATE: {
+                $typedValue = ($this->formatHelper->validateDate($value,'Y-m-d')?$this->formatHelper->date($value,'Y-m-d'):NULL);
+                break;
+            }
+            
+            case self::TYPE_DATE_TIME: {
 
-                $typedValue = $this->formatHelper->date($value);
+                $typedValue = ($this->formatHelper->validateDate($value)?$this->formatHelper->date($value):NULL);
+            break;
+            }
+
+            case self::TYPE_BINARY: {
+
+                $typedValue = ($value?base64_encode($value):NULL);
                 break;
             }
 
             case self::TYPE_JSON: {
-
-                $typedValue = json_decode($value);
+                $typedValue = (is_string($value)?json_decode($value):NULL);
+                break;
+            }
+            
+            case self::TYPE_HTML: {
+                $typedValue = NULL;
+                break;
+            }
+            
+            case self::TYPE_UUID: {
+                $typedValue = (string)$value;
+                break;
+            }
+            
+            case self::TYPE_VCARD: {
+                $typedValue = (string)$value;
                 break;
             }
         }
@@ -220,7 +254,6 @@ class ModelTransformer extends Transformer
 
             case Column::TYPE_INTEGER:
             case Column::TYPE_BIGINTEGER: {
-
                 $responseType = self::TYPE_INTEGER;
                 break;
             }
@@ -246,29 +279,36 @@ class ModelTransformer extends Transformer
 
             case Column::TYPE_VARCHAR:
             case Column::TYPE_CHAR:
-            case Column::TYPE_TEXT:
-            case Column::TYPE_BLOB:
-            case Column::TYPE_MEDIUMBLOB:
-            case Column::TYPE_LONGBLOB: {
-
+            case Column::TYPE_TEXT: {
                 $responseType = self::TYPE_STRING;
                 break;
             }
+                
+                
+            case Column::TYPE_BLOB:
+            case Column::TYPE_MEDIUMBLOB:
+            case Column::TYPE_LONGBLOB: {
+                $responseType = self::TYPE_BINARY;
+                break;
+            }
 
-            case Column::TYPE_DATE:
-            case Column::TYPE_DATETIME: {
-
+            case Column::TYPE_DATE: {
                 $responseType = self::TYPE_DATE;
+                break;
+            }
+                
+            case Column::TYPE_DATETIME: {
+                $responseType = self::TYPE_DATE_TIME;
                 break;
             }
 
             case Column::TYPE_JSON:
             case Column::TYPE_JSONB: {
-
                 $responseType = self::TYPE_JSON;
                 break;
             }
 
+    
             default:
                 $responseType = self::TYPE_STRING;
         }

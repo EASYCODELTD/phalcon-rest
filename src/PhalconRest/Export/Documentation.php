@@ -56,18 +56,29 @@ class Documentation extends Plugin
         $collection->setDescription($apiCollection->getDescription());
         $collection->setPath($apiCollection->getPrefix());
 
+        
+        
         // Set fields
         if ($apiCollection instanceof ApiResource) {
 
+
+            
             if ($modelClass = $apiCollection->getModel()) {
 
-                if ($transformerClass = $apiCollection->getTransformer()) {
+                $transformerClass = $apiCollection->getTransformer();
+               
+                
+                if ($transformerClass && class_exists($transformerClass)) {
 
                     /** @var ModelTransformer $transformer */
                     $transformer = new $transformerClass;
 
+                    
+                    
                     if ($transformer instanceof ModelTransformer) {
 
+                        
+                        
                         $transformer->setModelClass($modelClass);
 
                         $responseFields = $transformer->getResponseProperties();
@@ -76,8 +87,7 @@ class Documentation extends Plugin
                         $fields = [];
 
                         foreach ($responseFields as $field) {
-                            $fields[$field] = array_key_exists($field,
-                                $dataTypes) ? $dataTypes[$field] : ModelTransformer::TYPE_UNKNOWN;
+                            $fields[$field] = array_key_exists($field, $dataTypes) ? $dataTypes[$field] : ModelTransformer::TYPE_UNKNOWN;
                         }
 
                         $collection->setFields($fields);

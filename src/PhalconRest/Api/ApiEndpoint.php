@@ -90,9 +90,9 @@ class ApiEndpoint
      */
     public static function find()
     {
-        return self::factory('/{id}', HttpMethods::GET, 'find')
+        return self::factory('/{uuid}', HttpMethods::GET, 'find')
             ->name(self::FIND)
-            ->description('Returns the item identified by {id}');
+            ->description('Returns the item identified by {uuid}');
     }
 
     /**
@@ -114,9 +114,9 @@ class ApiEndpoint
      */
     public static function update()
     {
-        return self::factory('/{id}', HttpMethods::PUT, 'update')
+        return self::factory('/{uuid}', HttpMethods::PUT, 'update')
             ->name(self::UPDATE)
-            ->description('Updates an existing item identified by {id}, using the posted data');
+            ->description('Updates an existing item identified by {uuid}, using the posted data');
     }
 
     /**
@@ -126,9 +126,9 @@ class ApiEndpoint
      */
     public static function remove()
     {
-        return self::factory('/{id}', HttpMethods::DELETE, 'remove')
+        return self::factory('/{uuid}', HttpMethods::DELETE, 'remove')
             ->name(self::REMOVE)
-            ->description('Removes the item identified by {id}');
+            ->description('Removes the item identified by {uuid}');
     }
 
     /**
@@ -351,7 +351,8 @@ class ApiEndpoint
     public function allow()
     {
         $roleNames = func_get_args();
-
+        
+        
         // Flatten array to allow array inputs
         $roleNames = Core::array_flatten($roleNames);
 
@@ -384,6 +385,8 @@ class ApiEndpoint
     {
         $roleNames = func_get_args();
 
+        
+        
         // Flatten array to allow array inputs
         $roleNames = Core::array_flatten($roleNames);
 

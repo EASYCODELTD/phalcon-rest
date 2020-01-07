@@ -23,14 +23,29 @@ class ApiCollection extends \Phalcon\Mvc\Micro\Collection implements MountableIn
 
     protected $endpointsByName = [];
 
-
-    public function __construct($prefix)
+    protected $di;
+    
+    protected $config;
+        
+    public function __construct($prefix, $di = NULL, $config = NULL)
     {
         parent::setPrefix($prefix);
-
+        
+        $this->config = $config;
+        $this->setDi($di);
         $this->initialize();
     }
 
+    protected function setDi($di)
+    {
+        $this->di = $di;
+    }
+    
+    protected function getDi()
+    {
+        return $this->di;
+    }
+    
     /**
      * Use this method when you extend this class in order to define the collection
      */

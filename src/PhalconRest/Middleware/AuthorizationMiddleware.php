@@ -21,11 +21,12 @@ class AuthorizationMiddleware extends Plugin implements MiddlewareInterface
             return;
         }
 
-        $allowed = $this->acl->isAllowed($this->userService->getRole(), $collection->getIdentifier(),
-            $endpoint->getIdentifier());
+        $allowed = $this->acl->isAllowed($this->userService->getRole(), $collection->getIdentifier(),$endpoint->getIdentifier());
+        
+        
 
         if (!$allowed) {
-            throw new Exception(ErrorCodes::ACCESS_DENIED);
+            throw new Exception(ErrorCodes::ACCESS_DENIED,"Access Denied",['endpoint' => get_class($endpoint),'userrole'=>$this->userService->me()]);
         }
     }
 
