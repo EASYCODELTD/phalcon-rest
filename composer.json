@@ -6,7 +6,7 @@
     "require": {
         "php": ">=7.2",
         "ext-phalcon": ">=2.0.0",
-        "redound/phalcon-api": "^1.0.2"
+        "easycode/phalcon-api": "*"
     },
     "authors": [
         {
